@@ -1,21 +1,28 @@
 apply plugin: 'com.android.application'
-
+// Создаем переменную с именем keystorePropertiesFile и инициализируем ее
+// файл keystore.properties в папке rootProject.
 def keystorePropertiesFile = rootProject.file("keystore.properties")
-
+// Инициализировать новый объект Properties (), называемый keystoreProperties.
 def keystoreProperties = new Properties()
-
+// Загрузите файл keystore.properties в объект keystoreProperties.
 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
     signingConfigs {
         signingConfig {
-            keyAlias keystoreProperties['keyAlias']
-            keyPassword keystoreProperties['keyPassword']
-            //storeFile file(keystoreProperties['storeFile'])
-            storePassword keystoreProperties['storePassword']
+            "${System.env.YOUR_APP_ALIAS}" //keyAlias keystoreProperties['keyAlias']
+            "${System.env.YOUR_APP_PW}" //keyPassword keystoreProperties['keyPassword']
+            "${System.env.YOUR_APP_PRIVATE_KEY}" //storeFile file(keystoreProperties['storeFile'])
+            "${System.env.YOUR_APP_STORE_PW}" //storePassword keystoreProperties['storePassword']
+        }
+        config {
+            keyAlias 'MyAndroidKey'
+            keyPassword '070697'
+            storeFile file('C:/Users/Miroslav/keystores/android.jks')
+            storePassword '070697'
         }
     }
-    def getCommitsCount = { ->
+    def getCommitsCount = { ->                      //идентификатор commit
         def stdout = new ByteArrayOutputStream()
         exec {
             commandLine 'git', 'rev-list', 'HEAD', '--count'
@@ -24,7 +31,7 @@ android {
         return stdout.toString().trim().toInteger()
     }
 
-    def getTag = { ->
+    def getTag = { ->                               //прослеживаемость имени версии
         def stdout = new ByteArrayOutputStream()
         exec {
             commandLine 'git', 'describe', '--tags'
@@ -35,12 +42,12 @@ android {
     }
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.example.mikita.ppo_lab"      //собственное имя при компиляции проекта
+        applicationId "com.example.miroslav.ppo_lab"      //собственное имя при компиляции проекта
         minSdkVersion 23
         targetSdkVersion 28
         versionCode getCommitsCount()
-        versionName 'bla'//getTag()
-        setProperty("archivesBaseName", "$applicationId-$versionName")
+        versionName getTag()
+        setProperty("archivesBaseName", "$applicationId-$versionName")  //Вот второй параметр - это имя апк файла, и через $versionName они подставляют значение переменной в строку
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -51,9 +58,10 @@ android {
         release {                                       //убрать неиспользуемые ресурсы конфигурации
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.signingConfig
+            signingConfig signingConfigs.config
         }
     }
+    // Specifies one flavor dimension
     flavorDimensions "version"
     productFlavors {
         general {
@@ -61,13 +69,13 @@ android {
             // This property is optional if you are using only one dimension.
             dimension "version"
             applicationIdSuffix ".general"
-            manifestPlaceholders.screenOrientation = "portrait"
+            manifestPlaceholders.screenOrientation = "portrait"         //дополнительные манифесты (manifestPlaceholders)
         }
         dev {
             dimension "version"
             applicationIdSuffix ".dev"
             versionNameSuffix "-dev"
-            manifestPlaceholders.screenOrientation = "unspecified"
+            manifestPlaceholders.screenOrientation = "unspecified"      //чтобы использовать переменную в манифесте
         }
     }
 }

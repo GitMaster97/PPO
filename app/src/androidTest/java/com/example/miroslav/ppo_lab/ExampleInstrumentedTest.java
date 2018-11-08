@@ -1,4 +1,4 @@
-package com.example.mikita.ppo_lab;
+package com.example.miroslav.ppo_lab;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.example.mikita.ppo_lab", appContext.getPackageName());
+        assertEquals("com.example.miroslav.ppo_lab", appContext.getPackageName());
     }
 }

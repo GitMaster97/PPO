@@ -1,4 +1,4 @@
-package com.example.mikita.ppo_lab;
+package com.example.miroslav.ppo_lab;
 
 import org.junit.Test;
 
